@@ -45,6 +45,7 @@ class Board:
   # Instance Variables
   size: int
   board_dict: dict[str, str] # TODO: Make this private / inaccessible
+  column_letters: list[str]
   board_table: PrettyTable # TODO: Make this private / inaccessible
 
   def __init__(self, size: int=8):
@@ -55,9 +56,10 @@ class Board:
       self.size = SIZE
     self.board_dict = {}
     self.initialize_board_dict()
-    columns = [chr(65 + i) for i in range(self.size)]
-    columns = [" "] + columns if SHOW_GUIDES else columns
-    self.board_table = PrettyTable(columns)
+    self.column_letters = self.get_column_letters()
+    table_columns = self.column_letters
+    table_columns = [" "] + table_columns if SHOW_GUIDES else table_columns
+    self.board_table = PrettyTable(table_columns)
 
   def initialize_board_dict(self) -> None:
     """Initializes the board to the starting state
@@ -102,7 +104,7 @@ class Board:
     :return list[str]: The items in the given column
     """
     column = column.upper()
-    if not column in self.get_column_letters():
+    if not column in self.column_letters:
       print(f"Invalid column input. Must be between 1 and {self.size}")
       return []
     
@@ -125,9 +127,9 @@ class Board:
     column, row = list(space)
     row = int(row) # TODO: need error handling around this
 
-    if not column in self.get_column_letters():
+    if not column in self.column_letters:
       print(error_message)
-      print(f"Column must be in {self.get_column_letters()}")
+      print(f"Column must be in {self.column_letters}")
       return None
     
     if row < 1 or row > self.size:
