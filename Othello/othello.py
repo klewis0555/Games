@@ -105,7 +105,7 @@ class Board:
     """
     column = column.upper()
     if not column in self.column_letters:
-      print(f"Invalid column input. Must be between 1 and {self.size}")
+      print(f"Invalid column input. Must be between A and {self.column_letters[-1]}")
       return []
     
     return [self.board_dict[f"{column}{i + 1}"] for i in range(self.size)]
@@ -141,10 +141,109 @@ class Board:
       return None
 
     return f"{chr(ord(column)-1)}{row-1}"
+  
+  def get_dur(self, space: str) -> Union[str, None]:
+    """Returns the key of the space diagonally up and to the right of the given space.
+      dur = Diagonally Up right
+
+    :param str space: The starting space.
+      If this is in the top row or last column, return None.
+    :return str or None: The key to the space diagonally up and to the right of the given space
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_dur - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if column == self.column_letters[-1] or row == 1:
+      return None
+
+    return f"{chr(ord(column)+1)}{row-1}"
+  
+  def get_ddl(self, space: str) -> Union[str, None]:
+    """Returns the key of the space diagonally down and to the left of the given space.
+      ddl = Diagonally Down Left
+
+    :param str space: The starting space.
+      If this is in the top row or first column, return None.
+    :return str or None: The key to the space diagonally down and to the left of the given space
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_ddl - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if column == "A" or row == self.size:
+      return None
+
+    return f"{chr(ord(column)-1)}{row+1}"
+  
+  def get_ddr(self, space: str) -> Union[str, None]:
+    """Returns the key of the space diagonally down and to the right of the given space.
+      ddl = Diagonally Down Right
+
+    :param str space: The starting space.
+      If this is in the top row or first column, return None.
+    :return str or None: The key to the space diagonally down and to the right of the given space
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_ddr - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if column == self.column_letters[-1] or row == self.size:
+      return None
+
+    return f"{chr(ord(column)+1)}{row+1}"
 
 test_size = 14
 c_board = Board(test_size)
-print(c_board.get_column('o'))
+print(c_board.get_dul('b2'))
+print(c_board.get_dur('b2'))
+print(c_board.get_ddl('b2'))
+print(c_board.get_ddr('b2'))
 # import pprint
 # pprint.pprint(list(chunks(list(c_board.board_dict.values()), c_board.size)))
 
