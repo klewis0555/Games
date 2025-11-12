@@ -44,9 +44,9 @@ def chunks(lst: list[Any], n: int):
 class Board:
   # Instance Variables
   size: int
-  board_dict: dict[str, str] # TODO: Make this private / inaccessible
   column_letters: list[str]
-  board_table: PrettyTable # TODO: Make this private / inaccessible
+  _board_dict: dict[str, str] # TODO: Make this private / inaccessible
+  _board_table: PrettyTable # TODO: Make this private / inaccessible
 
   def __init__(self, size: int=8):
     if size >= 6 and size <= 26 and size%2 == 0:
@@ -54,12 +54,18 @@ class Board:
     else:
       print(f"Invalid size, setting to {SIZE}.")
       self.size = SIZE
-    self.board_dict = {}
+    self._board_dict = {}
     self.initialize_board_dict()
     self.column_letters = self.get_column_letters()
     table_columns = self.column_letters
     table_columns = [" "] + table_columns if SHOW_GUIDES else table_columns
-    self.board_table = PrettyTable(table_columns)
+    self._board_table = PrettyTable(table_columns)
+    self._board_table.header = False
+    for i in range(self.size):
+      self._board_table.add_row(self.get_row(i+1), divider=True)
+    # self._board_table.add_rows(
+    #   [self.get_row(col) for col in range(1, self.size + 1)]
+    # )
 
   def initialize_board_dict(self) -> None:
     """Initializes the board to the starting state
@@ -69,13 +75,18 @@ class Board:
         if i == int(self.size/2) or i == int(self.size/2) + 1:
           if j == int(self.size/2) or j == int(self.size/2) + 1:
             if i == j:
-              self.board_dict[f"{chr(64 + i)}{j}"] = BLACK
+              self._board_dict[f"{chr(64 + i)}{j}"] = BLACK
             else:
-              self.board_dict[f"{chr(64 + i)}{j}"] = WHITE
+              self._board_dict[f"{chr(64 + i)}{j}"] = WHITE
             continue
         
-        self.board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
+        self._board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
   
+  def print_board(self) -> None:
+    """Prints the board
+    """
+    print(self._board_table)
+
   def get_column_letters(self) -> list[str]:
     """Return the column letters for the board
 
@@ -94,7 +105,7 @@ class Board:
       print(f"Invalid row input. Must be between 1 and {self.size}")
       return []
     
-    return [self.board_dict[f"{chr(65 + i)}{row}"] for i in range(self.size)]
+    return [self._board_dict[f"{chr(65 + i)}{row}"] for i in range(self.size)]
   
   def get_column(self, column: str) -> list[str]:
     """Returns a list of the values in the given column
@@ -108,7 +119,7 @@ class Board:
       print(f"Invalid column input. Must be between A and {self.column_letters[-1]}")
       return []
     
-    return [self.board_dict[f"{column}{i + 1}"] for i in range(self.size)]
+    return [self._board_dict[f"{column}{i + 1}"] for i in range(self.size)]
   
   def get_dul(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally up and to the left of the given space.
@@ -244,6 +255,8 @@ print(c_board.get_dul('b2'))
 print(c_board.get_dur('b2'))
 print(c_board.get_ddl('b2'))
 print(c_board.get_ddr('b2'))
+c_board.print_board()
+# print([c_board.get_row(col) for col in range(1,c_board.size + 1)])
 # import pprint
-# pprint.pprint(list(chunks(list(c_board.board_dict.values()), c_board.size)))
+# pprint.pprint(list(chunks(list(c_board._board_dict.values()), c_board.size)))
 
