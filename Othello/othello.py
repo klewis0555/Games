@@ -3,8 +3,12 @@
 from prettytable import PrettyTable
 from typing import Any, Union
 
-WHITE = "◉"
-BLACK = "◎"
+# WHITE = "◉"
+# BLACK = "◎"
+WHITE = "⚪"
+BLACK = "⚫"
+# WHITE = "⬤"
+# BLACK = "◯"
 SIZE = 8
 DEFAULT = " "
 SHOW_GUIDES = False
@@ -61,8 +65,7 @@ class Board:
     table_columns = [" "] + table_columns if SHOW_GUIDES else table_columns
     self._board_table = PrettyTable(table_columns)
     self._board_table.header = False
-    for i in range(self.size):
-      self._board_table.add_row(self.get_row(i+1), divider=True)
+    self.update_board_table()
     # self._board_table.add_rows(
     #   [self.get_row(col) for col in range(1, self.size + 1)]
     # )
@@ -82,6 +85,34 @@ class Board:
         
         self._board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
   
+  def set_square(self, key: str, value: str) -> bool:
+    """Sets a single square in the board dictionary. Returns True if successful, False if not
+
+    :param str key: The key to set
+    :param str value: The value to set
+    :return bool: Returns True if successful, False if not.
+    """
+    key = key.upper()
+    if key in self._board_dict.keys():
+      if value in [WHITE, BLACK]:
+        self._board_dict[key] = value
+        return True
+      
+    return False
+  
+  def get_square(self, key: str) -> str:
+    """Returns the value in the provided square
+
+    :param str key: The square to get the value for
+    :return str: The value of the square
+    """
+    return self._board_dict[key]
+  
+  def update_board_table(self) -> None:
+    self._board_table.clear_rows()
+    for i in range(self.size):
+      self._board_table.add_row(self.get_row(i+1), divider=True)
+
   def print_board(self) -> None:
     """Prints the board
     """
@@ -121,6 +152,131 @@ class Board:
     
     return [self._board_dict[f"{column}{i + 1}"] for i in range(self.size)]
   
+  def get_left(self, space: str) -> Union[str, None]:
+    """Returns the key of the space to the left of the given space.
+
+    :param str space: The starting space.
+    :return Union[str, None]: Returns the key to the space to the left of the given space.
+      If given space is column A, return None.
+    """
+
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_left - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if column == "A":
+      return None
+    
+    return f"{chr(ord(column)-1)}{row}"
+  
+  def get_right(self, space: str) -> Union[str, None]:
+    """Returns the key of the space to the right of the given space.
+
+    :param str space: The starting space.
+    :return Union[str, None]: Returns the key to the space to the right of the given space.
+      If given space is the last column, return None.
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_right - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if column == self.column_letters[-1]:
+      return None
+    
+    return f"{chr(ord(column)+1)}{row}"
+  
+  def get_above(self, space: str) -> Union[str, None]:
+    """Returns the key of the space above the given space.
+
+    :param str space: The starting space.
+    :return Union[str, None]: Returns the key to the space above the given space.
+      If given space is row 1, return None.
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_above - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if row == 1:
+      return None
+    
+    return f"{column}{row-1}"
+  
+  def get_below(self, space: str) -> Union[str, None]:
+    """Returns the key of the space below the given space.
+
+    :param str space: The starting space.
+    :return Union[str, None]: Returns the key to the below above the given space.
+      If given space is row 1, return None.
+    """
+    space = space.upper()
+    # TODO: add proper error handling to this method instead of just returning None
+    error_message = f"Error!: get_below - Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+    
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+    
+    if row == self.size:
+      return None
+    
+    return f"{column}{row+1}"
+
   def get_dul(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally up and to the left of the given space.
       dul = Diagonally Up Left
@@ -249,13 +405,53 @@ class Board:
 
     return f"{chr(ord(column)+1)}{row+1}"
 
-test_size = 14
+  def check_move(self, space: str, color: str) -> tuple[bool, list[str]]:
+    space = space.upper()
+    if (space not in self._board_dict.keys()) or color not in [WHITE, BLACK] or self.get_square(space) != DEFAULT:
+      return False, []
+    
+    spaces_to_flip: list[str] = []  # spaces to be flipped if move is valid
+    directions = ["left", "right", "above", "below", "dul", "dur", "ddl", "ddr"]
+
+    for direction in directions:
+      current_space = space
+      working_spaces: list[str] = []  # working list of spaces, only add to final list if valid move
+      continue_check = True
+      count = 0
+      while continue_check and count < 100:
+        count += 1
+        current_space = getattr(self, f"get_{direction}")(current_space)
+
+        if current_space == None: # edge of board, not valid move
+          continue_check = False
+        elif self.get_square(current_space) == DEFAULT: # empty space, not a valid move
+          continue_check = False
+        elif self.get_square(current_space) == color: # flanking with same color, valid move, add working spaces to total list
+          spaces_to_flip += working_spaces
+          continue_check = False
+        else: # opposite color, add to working list and continue
+          working_spaces.append(current_space)
+    
+    if spaces_to_flip:
+      return True, spaces_to_flip
+    else:
+      return False, spaces_to_flip
+
+test_size = 8
 c_board = Board(test_size)
-print(c_board.get_dul('b2'))
-print(c_board.get_dur('b2'))
-print(c_board.get_ddl('b2'))
-print(c_board.get_ddr('b2'))
+c_board.set_square("d3", BLACK)
+c_board.set_square("d2", BLACK)
+c_board.set_square("e3", WHITE)
+c_board.set_square("f6", WHITE)
+
+# c_board.set_square("d1", BLACK)
+c_board.update_board_table()
 c_board.print_board()
+can_move, spaces = c_board.check_move("c3", WHITE)
+if can_move:
+  print(f"Valid move! Spaces: {spaces}")
+else:
+  print("Invalid move!")
 # print([c_board.get_row(col) for col in range(1,c_board.size + 1)])
 # import pprint
 # pprint.pprint(list(chunks(list(c_board._board_dict.values()), c_board.size)))
