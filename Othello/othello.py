@@ -1,5 +1,5 @@
 import sys
-# from random import randint, random, randrange
+from enum import Enum
 from prettytable import PrettyTable
 from typing import Any, Union
 
@@ -36,20 +36,17 @@ for i in range(SIZE):
 board.header = guides
 # print(board)
 
-
-# Function used to break a list down into evenly sized chunks, similar to many `slice`
-def chunks(lst: list[Any], n: int):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
-
 # =========================================== ending test code ===========================================
 
 class OthelloBoard:
+  class Color(Enum):
+    WHITE = "⚪"
+    BLACK = "⚫"
+
   # Instance Variables
   size: int
   column_letters: list[str]
-  _board_dict: dict[str, str] # TODO: Make this private / inaccessible
+  _board_dict: dict[str, Color] # TODO: Make this private / inaccessible
   _board_table: PrettyTable # TODO: Make this private / inaccessible
 
   def __init__(self, size: int=8):
@@ -66,9 +63,6 @@ class OthelloBoard:
     self._board_table = PrettyTable(table_columns)
     self._board_table.header = False
     self.update_board_table()
-    # self._board_table.add_rows(
-    #   [self.get_row(col) for col in range(1, self.size + 1)]
-    # )
 
   def initialize_board_dict(self) -> None:
     """Initializes the board to the starting state
@@ -78,27 +72,49 @@ class OthelloBoard:
         if i == int(self.size/2) or i == int(self.size/2) + 1:
           if j == int(self.size/2) or j == int(self.size/2) + 1:
             if i == j:
-              self._board_dict[f"{chr(64 + i)}{j}"] = BLACK
+              self._board_dict[f"{chr(64 + i)}{j}"] = self.Color.BLACK.value
             else:
-              self._board_dict[f"{chr(64 + i)}{j}"] = WHITE
+              self._board_dict[f"{chr(64 + i)}{j}"] = self.Color.WHITE.value
             continue
 
         self._board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
 
-  def set_square(self, key: str, value: str) -> bool:
-    """Sets a single square in the board dictionary. Returns True if successful, False if not
+  def set_square(self, key: str, color: Color) -> bool:
+    """Sets a single square in the board dictionary to a color. Returns True if successful, False if not
 
     :param str key: The key to set
-    :param str value: The value to set
+    :param str color: The color to set
     :return bool: Returns True if successful, False if not.
     """
     key = key.upper()
     if key in self._board_dict.keys():
-      if value in [WHITE, BLACK]:
-        self._board_dict[key] = value
+      if color in self.Color:
+        self._board_dict[key] = color.value
+        self.update_board_table()
         return True
 
     return False
+
+  def set_squares(self, keys: list[str], color: Color) -> bool:
+    """Sets multiple squares in the board dictionary to a color. Returns True if successful, False if not
+
+    :param list[str] keys: The keys to set
+    :param Color color: The color to set
+    :return bool: Returns True if successful, False if not.
+    """
+    valid = True
+    for key in keys:
+      key = key.upper()
+      if key in self._board_dict.keys():
+        if color in self.Color:
+          self._board_dict[key] = color.value
+        else:
+          valid = False
+      else:
+        valid = False
+
+    self.update_board_table()
+    return valid
 
   def get_square(self, key: str) -> str:
     """Returns the value in the provided square
@@ -109,6 +125,8 @@ class OthelloBoard:
     return self._board_dict[key]
 
   def update_board_table(self) -> None:
+    """Updates the board table with the values in the board dictionary
+    """
     self._board_table.clear_rows()
     for i in range(self.size):
       self._board_table.add_row(self.get_row(i+1), divider=True)
@@ -405,9 +423,16 @@ class OthelloBoard:
 
     return f"{chr(ord(column)+1)}{row+1}"
 
-  def check_move(self, space: str, color: str) -> tuple[bool, list[str]]:
+  def check_move(self, space: str, color: Color) -> tuple[bool, list[str]]:
+    """Checks if given space is a valid move for given color (will flank with a piece with a matching color)
+
+    :param str space: Space to check validity of move
+    :param Color color: Color to check if valid move
+    :return tuple[bool, list[str]]: Boolean of whether the move is valid or not,
+      and a list of spaces to flip if a piece were placed there.
+    """
     space = space.upper()
-    if (space not in self._board_dict.keys()) or color not in [WHITE, BLACK] or self.get_square(space) != DEFAULT:
+    if (space not in self._board_dict.keys()) or color not in self.Color or self.get_square(space) != DEFAULT:
       return False, []
 
     spaces_to_flip: list[str] = []  # spaces to be flipped if move is valid
@@ -426,8 +451,8 @@ class OthelloBoard:
           continue_check = False
         elif self.get_square(current_space) == DEFAULT: # empty space, not a valid move
           continue_check = False
-        elif self.get_square(current_space) == color: # flanking with same color, valid move, add working spaces to total list
-          spaces_to_flip += working_spaces
+        elif self.get_square(current_space) == color.value: # flanking with same color, valid move
+          spaces_to_flip += working_spaces # add working spaces to total list
           continue_check = False
         else: # opposite color, add to working list and continue
           working_spaces.append(current_space)
@@ -437,8 +462,12 @@ class OthelloBoard:
     else:
       return False, spaces_to_flip
 
-  # TODO: Test function
-  def any_valid_move(self, color: str) -> tuple[bool, list[str]]:
+  def any_valid_move(self, color: Color) -> tuple[bool, list[str]]:
+    """Loops through all spaces on the board to check if there are any valid moves for the given color.
+
+    :param Color color: Color to check valid moves for
+    :return tuple[bool, list[str]]: A boolean of whether there are any valid moves, and a list of valid spaces.
+    """
     valid_spaces: list[str] = []
     for space in self._board_dict.keys():
       if self.check_move(space, color)[0]:
@@ -446,7 +475,12 @@ class OthelloBoard:
 
     return len(valid_spaces) > 0, valid_spaces
 
-def valid_size_input(size_input):
+def valid_size_input(size_input: Any) -> bool:
+  """Checks if the input is valid (an int between 6 and 26)
+
+  :param Any size_input: Input to check
+  :return bool: Returns True if valid input, False if not.
+  """
   try:
     int_input = int(size_input)
     if int_input >= 6 and int_input <= 26:
@@ -476,20 +510,28 @@ def run_game():
       count += 1
   print(f"Running game of Othello with {board_size}x{board_size} board.")
   board = OthelloBoard(board_size)
-  turn = BLACK
+  turn = board.Color.BLACK
+  skip_count = 0
+
+  board.print_board()
+
+  # x = input(f"It's {turn.name.title()}'s turn! Choose a square: ")
+  # print(x)
+  while skip_count < 2:
+    has_valid_move, moves = board.any_valid_move(turn)
+    if has_valid_move:
+      move_chosen = False
+      while not move_chosen:
+        space = input(f"It's {turn.name.title()}'s turn! Choose a square: ")
+        if space in moves:
+          #implement setting the space
+          move_chosen = True
+        else:
+          print("Invalid move!")
+      skip_count = 0
+    else:
+      print(f"No valid moves for {turn.name.title()}. Skipping turn.")
+      skip_count += 1
+
 
 run_game()
-# test_size = 8
-# c_board = OthelloBoard(test_size)
-
-# # c_board.set_square("d1", BLACK)
-# c_board.update_board_table()
-# c_board.print_board()
-# can_move, spaces = c_board.check_move("c3", WHITE)
-# if can_move:
-#   print(f"Valid move! Spaces: {spaces}")
-# else:
-#   print("Invalid move!")
-# print([c_board.get_row(col) for col in range(1,c_board.size + 1)])
-# import pprint
-# pprint.pprint(list(chunks(list(c_board._board_dict.values()), c_board.size)))
