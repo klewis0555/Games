@@ -1,4 +1,4 @@
-# import sys
+import sys
 # from random import randint, random, randrange
 from prettytable import PrettyTable
 from typing import Any, Union
@@ -45,7 +45,7 @@ def chunks(lst: list[Any], n: int):
 
 # =========================================== ending test code ===========================================
 
-class Board:
+class OthelloBoard:
   # Instance Variables
   size: int
   column_letters: list[str]
@@ -82,9 +82,9 @@ class Board:
             else:
               self._board_dict[f"{chr(64 + i)}{j}"] = WHITE
             continue
-        
+
         self._board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
-  
+
   def set_square(self, key: str, value: str) -> bool:
     """Sets a single square in the board dictionary. Returns True if successful, False if not
 
@@ -97,9 +97,9 @@ class Board:
       if value in [WHITE, BLACK]:
         self._board_dict[key] = value
         return True
-      
+
     return False
-  
+
   def get_square(self, key: str) -> str:
     """Returns the value in the provided square
 
@@ -107,7 +107,7 @@ class Board:
     :return str: The value of the square
     """
     return self._board_dict[key]
-  
+
   def update_board_table(self) -> None:
     self._board_table.clear_rows()
     for i in range(self.size):
@@ -135,9 +135,9 @@ class Board:
     if row < 1 or row > self.size:
       print(f"Invalid row input. Must be between 1 and {self.size}")
       return []
-    
+
     return [self._board_dict[f"{chr(65 + i)}{row}"] for i in range(self.size)]
-  
+
   def get_column(self, column: str) -> list[str]:
     """Returns a list of the values in the given column
 
@@ -149,9 +149,9 @@ class Board:
     if not column in self.column_letters:
       print(f"Invalid column input. Must be between A and {self.column_letters[-1]}")
       return []
-    
+
     return [self._board_dict[f"{column}{i + 1}"] for i in range(self.size)]
-  
+
   def get_left(self, space: str) -> Union[str, None]:
     """Returns the key of the space to the left of the given space.
 
@@ -173,17 +173,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == "A":
       return None
-    
+
     return f"{chr(ord(column)-1)}{row}"
-  
+
   def get_right(self, space: str) -> Union[str, None]:
     """Returns the key of the space to the right of the given space.
 
@@ -204,17 +204,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == self.column_letters[-1]:
       return None
-    
+
     return f"{chr(ord(column)+1)}{row}"
-  
+
   def get_above(self, space: str) -> Union[str, None]:
     """Returns the key of the space above the given space.
 
@@ -235,17 +235,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if row == 1:
       return None
-    
+
     return f"{column}{row-1}"
-  
+
   def get_below(self, space: str) -> Union[str, None]:
     """Returns the key of the space below the given space.
 
@@ -266,15 +266,15 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if row == self.size:
       return None
-    
+
     return f"{column}{row+1}"
 
   def get_dul(self, space: str) -> Union[str, None]:
@@ -298,17 +298,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == "A" or row == 1:
       return None
 
     return f"{chr(ord(column)-1)}{row-1}"
-  
+
   def get_dur(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally up and to the right of the given space.
       dur = Diagonally Up right
@@ -330,17 +330,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == self.column_letters[-1] or row == 1:
       return None
 
     return f"{chr(ord(column)+1)}{row-1}"
-  
+
   def get_ddl(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally down and to the left of the given space.
       ddl = Diagonally Down Left
@@ -362,17 +362,17 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == "A" or row == self.size:
       return None
 
     return f"{chr(ord(column)-1)}{row+1}"
-  
+
   def get_ddr(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally down and to the right of the given space.
       ddl = Diagonally Down Right
@@ -394,12 +394,12 @@ class Board:
       print(error_message)
       print(f"Column must be in {self.column_letters}")
       return None
-    
+
     if row < 1 or row > self.size:
       print(error_message)
       print(f"Row must be between 1 and {self.size}")
       return None
-    
+
     if column == self.column_letters[-1] or row == self.size:
       return None
 
@@ -409,7 +409,7 @@ class Board:
     space = space.upper()
     if (space not in self._board_dict.keys()) or color not in [WHITE, BLACK] or self.get_square(space) != DEFAULT:
       return False, []
-    
+
     spaces_to_flip: list[str] = []  # spaces to be flipped if move is valid
     directions = ["left", "right", "above", "below", "dul", "dur", "ddl", "ddr"]
 
@@ -431,28 +431,65 @@ class Board:
           continue_check = False
         else: # opposite color, add to working list and continue
           working_spaces.append(current_space)
-    
+
     if spaces_to_flip:
       return True, spaces_to_flip
     else:
       return False, spaces_to_flip
 
-test_size = 8
-c_board = Board(test_size)
-c_board.set_square("d3", BLACK)
-c_board.set_square("d2", BLACK)
-c_board.set_square("e3", WHITE)
-c_board.set_square("f6", WHITE)
+  # TODO: Test function
+  def any_valid_move(self, color: str) -> tuple[bool, list[str]]:
+    valid_spaces: list[str] = []
+    for space in self._board_dict.keys():
+      if self.check_move(space, color)[0]:
+        valid_spaces.append(space)
 
-# c_board.set_square("d1", BLACK)
-c_board.update_board_table()
-c_board.print_board()
-can_move, spaces = c_board.check_move("c3", WHITE)
-if can_move:
-  print(f"Valid move! Spaces: {spaces}")
-else:
-  print("Invalid move!")
+    return len(valid_spaces) > 0, valid_spaces
+
+def valid_size_input(size_input):
+  try:
+    int_input = int(size_input)
+    if int_input >= 6 and int_input <= 26:
+      return True
+    else:
+      print(f"Invalid input: {int_input}. Must be between 6 and 26.")
+  except ValueError:
+    print(f"Invalid input: {size_input}. Must be an integer.")
+  return False
+
+def run_game():
+  board_size = 0
+  missing_size = True
+  if len(sys.argv) > 1:
+    if valid_size_input(sys.argv[1]):
+      board_size = int(sys.argv[1])
+      missing_size = False
+      print(f"Using first argument from command line as size: {board_size}") # because argv[0] is the name of the script
+
+  if missing_size:
+    count = 0
+    while missing_size and count <= 3:
+      size_input = input("Size of board? ")
+      if valid_size_input(size_input):
+        board_size = int(size_input)
+        missing_size = False
+      count += 1
+  print(f"Running game of Othello with {board_size}x{board_size} board.")
+  board = OthelloBoard(board_size)
+  turn = BLACK
+
+run_game()
+# test_size = 8
+# c_board = OthelloBoard(test_size)
+
+# # c_board.set_square("d1", BLACK)
+# c_board.update_board_table()
+# c_board.print_board()
+# can_move, spaces = c_board.check_move("c3", WHITE)
+# if can_move:
+#   print(f"Valid move! Spaces: {spaces}")
+# else:
+#   print("Invalid move!")
 # print([c_board.get_row(col) for col in range(1,c_board.size + 1)])
 # import pprint
 # pprint.pprint(list(chunks(list(c_board._board_dict.values()), c_board.size)))
-
