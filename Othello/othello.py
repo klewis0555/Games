@@ -1,44 +1,13 @@
-import sys
+# import sys
 from enum import Enum
 from prettytable import PrettyTable
-from typing import Any, Union
+from typing import Union
 
-# WHITE = "◉"
-# BLACK = "◎"
-WHITE = "⚪"
-BLACK = "⚫"
-# WHITE = "⬤"
-# BLACK = "◯"
 SIZE = 8
 DEFAULT = " "
 SHOW_GUIDES = False
 
-
-# =========================================== starting test code ===========================================
-guides = True
-columns = [" "] if guides else []
-
-for i in range(SIZE):
-  columns.append(chr(65 + i))
-
-board = PrettyTable(columns)
-
-for i in range(SIZE):
-  half = int(SIZE / 2)
-  start = [i + 1] if guides else[]
-  if i == half:
-    board.add_row(start + [DEFAULT] * (half-1) + [WHITE, BLACK] + [DEFAULT] * (half-1), divider=True)
-  elif i+1 == half:
-    board.add_row(start + [DEFAULT] * (half-1) + [BLACK, WHITE] + [DEFAULT] * (half-1), divider=True)
-  else:
-    board.add_row(start + [DEFAULT] * (SIZE), divider=True)
-
-board.header = guides
-# print(board)
-
-# =========================================== ending test code ===========================================
-
-class OthelloBoard:
+class Othello:
   class Color(Enum):
     WHITE = "⚪"
     BLACK = "⚫"
@@ -50,7 +19,7 @@ class OthelloBoard:
   _board_table: PrettyTable # TODO: Make this private / inaccessible
 
   def __init__(self, size: int=8):
-    if size >= 6 and size <= 26 and size%2 == 0:
+    if type(size) == int and (size >= 6 and size <= 26 and size%2 == 0):
       self.size = size
     else:
       print(f"Invalid size, setting to {SIZE}.")
@@ -170,228 +139,228 @@ class OthelloBoard:
 
     return [self._board_dict[f"{column}{i + 1}"] for i in range(self.size)]
 
-  def get_left(self, space: str) -> Union[str, None]:
-    """Returns the key of the space to the left of the given space.
+  # def get_left(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space to the left of the given space.
 
-    :param str space: The starting space.
-    :return Union[str, None]: Returns the key to the space to the left of the given space.
-      If given space is column A, return None.
-    """
+  #   :param str space: The starting space.
+  #   :return Union[str, None]: Returns the key to the space to the left of the given space.
+  #     If given space is column A, return None.
+  #   """
 
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_left - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_left - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if column == "A":
-      return None
+  #   if column == "A":
+  #     return None
 
-    return f"{chr(ord(column)-1)}{row}"
+  #   return f"{chr(ord(column)-1)}{row}"
 
-  def get_right(self, space: str) -> Union[str, None]:
-    """Returns the key of the space to the right of the given space.
+  # def get_right(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space to the right of the given space.
 
-    :param str space: The starting space.
-    :return Union[str, None]: Returns the key to the space to the right of the given space.
-      If given space is the last column, return None.
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_right - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #   :return Union[str, None]: Returns the key to the space to the right of the given space.
+  #     If given space is the last column, return None.
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_right - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if column == self.column_letters[-1]:
-      return None
+  #   if column == self.column_letters[-1]:
+  #     return None
 
-    return f"{chr(ord(column)+1)}{row}"
+  #   return f"{chr(ord(column)+1)}{row}"
 
-  def get_above(self, space: str) -> Union[str, None]:
-    """Returns the key of the space above the given space.
+  # def get_above(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space above the given space.
 
-    :param str space: The starting space.
-    :return Union[str, None]: Returns the key to the space above the given space.
-      If given space is row 1, return None.
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_above - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #   :return Union[str, None]: Returns the key to the space above the given space.
+  #     If given space is row 1, return None.
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_above - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if row == 1:
-      return None
+  #   if row == 1:
+  #     return None
 
-    return f"{column}{row-1}"
+  #   return f"{column}{row-1}"
 
-  def get_below(self, space: str) -> Union[str, None]:
-    """Returns the key of the space below the given space.
+  # def get_below(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space below the given space.
 
-    :param str space: The starting space.
-    :return Union[str, None]: Returns the key to the below above the given space.
-      If given space is row 1, return None.
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_below - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #   :return Union[str, None]: Returns the key to the below above the given space.
+  #     If given space is row 1, return None.
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_below - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if row == self.size:
-      return None
+  #   if row == self.size:
+  #     return None
 
-    return f"{column}{row+1}"
+  #   return f"{column}{row+1}"
 
-  def get_dul(self, space: str) -> Union[str, None]:
-    """Returns the key of the space diagonally up and to the left of the given space.
-      dul = Diagonally Up Left
+  # def get_dul(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space diagonally up and to the left of the given space.
+  #     dul = Diagonally Up Left
 
-    :param str space: The starting space.
-      If this is in the top row or first column, return None.
-    :return str or None: The key to the space diagonally up and to the left of the given space
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_dul - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #     If this is in the top row or first column, return None.
+  #   :return str or None: The key to the space diagonally up and to the left of the given space
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_dul - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if column == "A" or row == 1:
-      return None
+  #   if column == "A" or row == 1:
+  #     return None
 
-    return f"{chr(ord(column)-1)}{row-1}"
+  #   return f"{chr(ord(column)-1)}{row-1}"
 
-  def get_dur(self, space: str) -> Union[str, None]:
-    """Returns the key of the space diagonally up and to the right of the given space.
-      dur = Diagonally Up right
+  # def get_dur(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space diagonally up and to the right of the given space.
+  #     dur = Diagonally Up right
 
-    :param str space: The starting space.
-      If this is in the top row or last column, return None.
-    :return str or None: The key to the space diagonally up and to the right of the given space
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_dur - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #     If this is in the top row or last column, return None.
+  #   :return str or None: The key to the space diagonally up and to the right of the given space
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_dur - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if column == self.column_letters[-1] or row == 1:
-      return None
+  #   if column == self.column_letters[-1] or row == 1:
+  #     return None
 
-    return f"{chr(ord(column)+1)}{row-1}"
+  #   return f"{chr(ord(column)+1)}{row-1}"
 
-  def get_ddl(self, space: str) -> Union[str, None]:
-    """Returns the key of the space diagonally down and to the left of the given space.
-      ddl = Diagonally Down Left
+  # def get_ddl(self, space: str) -> Union[str, None]:
+  #   """Returns the key of the space diagonally down and to the left of the given space.
+  #     ddl = Diagonally Down Left
 
-    :param str space: The starting space.
-      If this is in the top row or first column, return None.
-    :return str or None: The key to the space diagonally down and to the left of the given space
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_ddl - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+  #   :param str space: The starting space.
+  #     If this is in the top row or first column, return None.
+  #   :return str or None: The key to the space diagonally down and to the left of the given space
+  #   """
+  #   space = space.upper()
+  #   # TODO: add proper error handling to this method instead of just returning None
+  #   error_message = f"Error!: get_ddl - Invalid key: {space}"
+  #   if len(space) != 2:
+  #     print(error_message)
+  #     return None
+  #   column, row = list(space)
+  #   row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+  #   if not column in self.column_letters:
+  #     print(error_message)
+  #     print(f"Column must be in {self.column_letters}")
+  #     return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+  #   if row < 1 or row > self.size:
+  #     print(error_message)
+  #     print(f"Row must be between 1 and {self.size}")
+  #     return None
 
-    if column == "A" or row == self.size:
-      return None
+  #   if column == "A" or row == self.size:
+  #     return None
 
-    return f"{chr(ord(column)-1)}{row+1}"
+  #   return f"{chr(ord(column)-1)}{row+1}"
 
-  def get_ddr(self, space: str) -> Union[str, None]:
+  # def get_ddr(self, space: str) -> Union[str, None]:
     """Returns the key of the space diagonally down and to the right of the given space.
       ddl = Diagonally Down Right
 
@@ -423,6 +392,56 @@ class OthelloBoard:
 
     return f"{chr(ord(column)+1)}{row+1}"
 
+  def get_next_space(self, space: str, direction: str) -> Union[str, None]:
+    space = space.upper()
+    error_message = f"Error!: Invalid key: {space}"
+    if len(space) != 2:
+      print(error_message)
+      return None
+    column, row = list(space)
+    row = int(row) # TODO: need error handling around this
+
+    if not column in self.column_letters:
+      print(error_message)
+      print(f"Column must be in {self.column_letters}")
+      return None
+
+    if row < 1 or row > self.size:
+      print(error_message)
+      print(f"Row must be between 1 and {self.size}")
+      return None
+
+    direction = direction.lower()
+    valid_directions = ["left", "right", "up", "down", "upleft", "upright", "downleft", "downright"]
+    if direction not in valid_directions:
+      print (f"Error!: Invalid direction: {direction}")
+      print(f"Directions must be in {valid_directions}")
+      return None
+
+    if "left" in direction:
+      if column == "A":
+        return None
+      else:
+        column = chr(ord(column)-1)
+    elif "right" in direction:
+      if column == self.column_letters[-1]:
+        return None
+      else:
+        column = chr(ord(column)+1)
+
+    if "up" in direction:
+      if row == 1:
+        return None
+      else:
+        row -= 1
+    elif "down" in direction:
+      if row == self.size:
+        return None
+      else:
+        row += 1
+
+    return f"{column}{row}"
+
   def check_move(self, space: str, color: Color) -> tuple[bool, list[str]]:
     """Checks if given space is a valid move for given color (will flank with a piece with a matching color)
 
@@ -436,7 +455,8 @@ class OthelloBoard:
       return False, []
 
     spaces_to_flip: list[str] = []  # spaces to be flipped if move is valid
-    directions = ["left", "right", "above", "below", "dul", "dur", "ddl", "ddr"]
+    # directions = ["left", "right", "above", "below", "dul", "dur", "ddl", "ddr"]
+    directions = ["left", "right", "up", "down", "upleft", "upright", "downleft", "downright"]
 
     for direction in directions:
       current_space = space
@@ -445,7 +465,8 @@ class OthelloBoard:
       count = 0
       while continue_check and count < 100:
         count += 1
-        current_space = getattr(self, f"get_{direction}")(current_space)
+        # current_space = getattr(self, f"get_{direction}")(current_space)
+        current_space = self.get_next_space(current_space, direction)
 
         if current_space == None: # edge of board, not valid move
           continue_check = False
@@ -474,64 +495,3 @@ class OthelloBoard:
         valid_spaces.append(space)
 
     return len(valid_spaces) > 0, valid_spaces
-
-def valid_size_input(size_input: Any) -> bool:
-  """Checks if the input is valid (an int between 6 and 26)
-
-  :param Any size_input: Input to check
-  :return bool: Returns True if valid input, False if not.
-  """
-  try:
-    int_input = int(size_input)
-    if int_input >= 6 and int_input <= 26:
-      return True
-    else:
-      print(f"Invalid input: {int_input}. Must be between 6 and 26.")
-  except ValueError:
-    print(f"Invalid input: {size_input}. Must be an integer.")
-  return False
-
-def run_game():
-  board_size = 0
-  missing_size = True
-  if len(sys.argv) > 1:
-    if valid_size_input(sys.argv[1]):
-      board_size = int(sys.argv[1])
-      missing_size = False
-      print(f"Using first argument from command line as size: {board_size}") # because argv[0] is the name of the script
-
-  if missing_size:
-    count = 0
-    while missing_size and count <= 3:
-      size_input = input("Size of board? ")
-      if valid_size_input(size_input):
-        board_size = int(size_input)
-        missing_size = False
-      count += 1
-  print(f"Running game of Othello with {board_size}x{board_size} board.")
-  board = OthelloBoard(board_size)
-  turn = board.Color.BLACK
-  skip_count = 0
-
-  board.print_board()
-
-  # x = input(f"It's {turn.name.title()}'s turn! Choose a square: ")
-  # print(x)
-  while skip_count < 2:
-    has_valid_move, moves = board.any_valid_move(turn)
-    if has_valid_move:
-      move_chosen = False
-      while not move_chosen:
-        space = input(f"It's {turn.name.title()}'s turn! Choose a square: ")
-        if space in moves:
-          #implement setting the space
-          move_chosen = True
-        else:
-          print("Invalid move!")
-      skip_count = 0
-    else:
-      print(f"No valid moves for {turn.name.title()}. Skipping turn.")
-      skip_count += 1
-
-
-run_game()
