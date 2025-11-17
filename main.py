@@ -1,5 +1,6 @@
 import sys
 from typing import Any
+from prettytable import PrettyTable
 from Othello.othello import Othello
 
 # WHITE = "◉"
@@ -48,7 +49,7 @@ def valid_size_input(size_input: Any) -> bool:
     if int_input >= 6 and int_input <= 26 and int_input%2 == 0:
       return True
     else:
-      print(f"Invalid input: {int_input}. Must be between 6 and 26.")
+      print(f"Invalid input: {int_input}. Must be an even integer between 6 and 26.")
   except ValueError:
     print(f"Invalid input: {size_input}. Must be an integer.")
   return False
@@ -107,9 +108,12 @@ print(chr(ord(column)-1))
 test_size = 8
 c_board = Othello(test_size)
 
-# c_board.set_square("d1", BLACK)
+c_board.set_square("d1", c_board.Color.BLACK)
 c_board.update_board_table()
 c_board.print_board()
+c_board.toggle_guides()
+c_board.print_board()
+print(c_board.get_next_space('a1', 'left'))
 can_move, spaces = c_board.check_move("c4", c_board.Color.WHITE)
 if can_move:
   print(f"Valid move! Spaces: {spaces}")

@@ -5,7 +5,6 @@ from typing import Union
 
 SIZE = 8
 DEFAULT = " "
-SHOW_GUIDES = False
 
 class Othello:
   class Color(Enum):
@@ -24,13 +23,12 @@ class Othello:
     else:
       print(f"Invalid size, setting to {SIZE}.")
       self.size = SIZE
+    self._show_guides = True
     self._board_dict = {}
     self.initialize_board_dict()
     self.column_letters = self.get_column_letters()
     table_columns = self.column_letters
-    table_columns = [" "] + table_columns if SHOW_GUIDES else table_columns
     self._board_table = PrettyTable(table_columns)
-    self._board_table.header = False
     self.update_board_table()
 
   def initialize_board_dict(self) -> None:
@@ -41,12 +39,30 @@ class Othello:
         if i == int(self.size/2) or i == int(self.size/2) + 1:
           if j == int(self.size/2) or j == int(self.size/2) + 1:
             if i == j:
-              self._board_dict[f"{chr(64 + i)}{j}"] = self.Color.BLACK.value
-            else:
               self._board_dict[f"{chr(64 + i)}{j}"] = self.Color.WHITE.value
+            else:
+              self._board_dict[f"{chr(64 + i)}{j}"] = self.Color.BLACK.value
             continue
 
         self._board_dict[f"{chr(64 + i)}{j}"] = DEFAULT
+
+  def get_column_letters(self) -> list[str]:
+    """Return the column letters for the board
+
+    :return list[str]: Column letters for the board
+    """
+    start = [DEFAULT] if self._show_guides else []
+    return start + [chr(65 + i) for i in range(self.size)]
+
+  def update_board_table(self) -> None:
+    """Updates the board table with the values in the board dictionary
+    """
+    self._board_table.clear()
+    self._board_table.header = self._show_guides
+    self._board_table.field_names = self.get_column_letters()
+    for i in range(self.size):
+      start = [i + 1] if self._show_guides else []
+      self._board_table.add_row(start + self.get_row(i+1), divider=True)
 
   def set_square(self, key: str, color: Color) -> bool:
     """Sets a single square in the board dictionary to a color. Returns True if successful, False if not
@@ -93,24 +109,16 @@ class Othello:
     """
     return self._board_dict[key]
 
-  def update_board_table(self) -> None:
-    """Updates the board table with the values in the board dictionary
+  def toggle_guides(self) -> None:
+    """Toggles the guides of the board table and refreshes the board.
     """
-    self._board_table.clear_rows()
-    for i in range(self.size):
-      self._board_table.add_row(self.get_row(i+1), divider=True)
+    self._show_guides = not self._show_guides
+    self.update_board_table()
 
   def print_board(self) -> None:
     """Prints the board
     """
     print(self._board_table)
-
-  def get_column_letters(self) -> list[str]:
-    """Return the column letters for the board
-
-    :return list[str]: Column letters for the board
-    """
-    return [chr(65 + i) for i in range(self.size)]
 
   def get_row(self, row: int) -> list[str]:
     """Returns a list of the values in the given row
@@ -133,7 +141,7 @@ class Othello:
     :return list[str]: The items in the given column
     """
     column = column.upper()
-    if not column in self.column_letters:
+    if (not column in self.column_letters) or column == DEFAULT:
       print(f"Invalid column input. Must be between A and {self.column_letters[-1]}")
       return []
 
@@ -361,36 +369,36 @@ class Othello:
   #   return f"{chr(ord(column)-1)}{row+1}"
 
   # def get_ddr(self, space: str) -> Union[str, None]:
-    """Returns the key of the space diagonally down and to the right of the given space.
-      ddl = Diagonally Down Right
+    # """Returns the key of the space diagonally down and to the right of the given space.
+    #   ddl = Diagonally Down Right
 
-    :param str space: The starting space.
-      If this is in the top row or first column, return None.
-    :return str or None: The key to the space diagonally down and to the right of the given space
-    """
-    space = space.upper()
-    # TODO: add proper error handling to this method instead of just returning None
-    error_message = f"Error!: get_ddr - Invalid key: {space}"
-    if len(space) != 2:
-      print(error_message)
-      return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+    # :param str space: The starting space.
+    #   If this is in the top row or first column, return None.
+    # :return str or None: The key to the space diagonally down and to the right of the given space
+    # """
+    # space = space.upper()
+    # # TODO: add proper error handling to this method instead of just returning None
+    # error_message = f"Error!: get_ddr - Invalid key: {space}"
+    # if len(space) != 2:
+    #   print(error_message)
+    #   return None
+    # column, row = list(space)
+    # row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
-      print(error_message)
-      print(f"Column must be in {self.column_letters}")
-      return None
+    # if not column in self.column_letters:
+    #   print(error_message)
+    #   print(f"Column must be in {self.column_letters}")
+    #   return None
 
-    if row < 1 or row > self.size:
-      print(error_message)
-      print(f"Row must be between 1 and {self.size}")
-      return None
+    # if row < 1 or row > self.size:
+    #   print(error_message)
+    #   print(f"Row must be between 1 and {self.size}")
+    #   return None
 
-    if column == self.column_letters[-1] or row == self.size:
-      return None
+    # if column == self.column_letters[-1] or row == self.size:
+    #   return None
 
-    return f"{chr(ord(column)+1)}{row+1}"
+    # return f"{chr(ord(column)+1)}{row+1}"
 
   def get_next_space(self, space: str, direction: str) -> Union[str, None]:
     space = space.upper()
@@ -401,9 +409,10 @@ class Othello:
     column, row = list(space)
     row = int(row) # TODO: need error handling around this
 
-    if not column in self.column_letters:
+    valid_column_letters = [letter for letter in self.column_letters if letter != DEFAULT]
+    if not column in valid_column_letters:
       print(error_message)
-      print(f"Column must be in {self.column_letters}")
+      print(f"Column must be in {valid_column_letters}")
       return None
 
     if row < 1 or row > self.size:
@@ -424,7 +433,7 @@ class Othello:
       else:
         column = chr(ord(column)-1)
     elif "right" in direction:
-      if column == self.column_letters[-1]:
+      if column == valid_column_letters[-1]:
         return None
       else:
         column = chr(ord(column)+1)
