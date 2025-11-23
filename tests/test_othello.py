@@ -225,3 +225,33 @@ def test_get_row(row, return_list):
 def test_get_column(column, return_list):
   test_board = Othello(6)
   assert test_board.get_column(column) == return_list
+
+@pytest.mark.parametrize(
+  "square, direction, next_space",
+  [
+    ('B2', 'left', 'A2'),
+    ('B2', 'upleft', 'A1'),
+    ('B2', 'up', 'B1'),
+    ('B2', 'upright', 'C1'),
+    ('B2', 'right', 'C2'),
+    ('B2', 'downright', 'C3'),
+    ('B2', 'down', 'B3'),
+    ('B2', 'downleft', 'A3'),
+    ('B2', 'rightup', 'C1'),
+    ('B2', 'right up', 'C1'),
+    ('b2', 'rightup', 'C1'),
+    ('B2', 'up_something_else_right', 'C1'),
+    ('B2', 'upupup', 'B1'),
+    ('D1', 'up', None),
+    ('A1', 'upright', None),
+    ('F3', 'right', None),
+    ('E6', 'rightdown', None),
+    ('C6', 'down', None),
+    ('B6', 'downleft', None),
+    ('A4', 'left', None),
+    ('A2', 'leftup', None),
+  ]
+)
+def test_get_next_space(square, direction, next_space):
+  test_board = Othello(6)
+  assert test_board.get_next_space(square, direction) == next_space
