@@ -105,7 +105,7 @@ print("down" in direction)
 column = "B"
 print(chr(ord(column)-1))
 
-test_size = 8
+test_size = 20
 c_board = Othello(test_size)
 
 c_board.set_square("d1", c_board.Color.BLACK)
@@ -114,7 +114,7 @@ c_board.print_board()
 c_board.toggle_guides()
 c_board.print_board()
 print(c_board.get_next_space('a1', 'left'))
-can_move, spaces = c_board.check_move("c4", c_board.Color.WHITE)
+can_move, spaces = c_board.check_move("k12", c_board.Color.BLACK)
 if can_move:
   print(f"Valid move! Spaces: {spaces}")
 else:

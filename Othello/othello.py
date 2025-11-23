@@ -107,7 +107,11 @@ class Othello:
     :param str key: The square to get the value for
     :return str: The value of the square
     """
-    return self._board_dict[key]
+    try:
+      return self._board_dict[key.upper()]
+    except KeyError:
+      print("Invalid square. Not in board.")
+      return None
 
   def toggle_guides(self) -> None:
     """Toggles the guides of the board table and refreshes the board.
@@ -127,6 +131,12 @@ class Othello:
       Must be between 1 and the max size of the board
     :return list[str]: The items in the given row
     """
+    try:
+      row = int(row)
+    except ValueError:
+      print("Invalid row input. Must be Integer")
+      return []
+
     if row < 1 or row > self.size:
       print(f"Invalid row input. Must be between 1 and {self.size}")
       return []
@@ -140,6 +150,12 @@ class Othello:
       Must be between 'A' and the last column of the board
     :return list[str]: The items in the given column
     """
+    try:
+      column = str(column)
+    except ValueError:
+      print("Invalid row input. Must be String")
+      return []
+
     column = column.upper()
     if (not column in self.column_letters) or column == DEFAULT:
       print(f"Invalid column input. Must be between A and {self.column_letters[-1]}")
@@ -403,11 +419,11 @@ class Othello:
   def get_next_space(self, space: str, direction: str) -> Union[str, None]:
     space = space.upper()
     error_message = f"Error!: Invalid key: {space}"
-    if len(space) != 2:
+    if len(space) != 2 and len(space) != 3:
       print(error_message)
       return None
-    column, row = list(space)
-    row = int(row) # TODO: need error handling around this
+    column = list(space)[0]
+    row = int(''.join(list(space)[1:])) # TODO: need error handling around this
 
     valid_column_letters = [letter for letter in self.column_letters if letter != DEFAULT]
     if not column in valid_column_letters:
