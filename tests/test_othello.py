@@ -255,3 +255,22 @@ def test_get_column(column, return_list):
 def test_get_next_space(square, direction, next_space):
   test_board = Othello(6)
   assert test_board.get_next_space(square, direction) == next_space
+
+@pytest.mark.parametrize(
+  "square, color, expected_valid, expected_spaces_to_flip",
+  [
+    ('C4', Othello.Color.WHITE, True, ['D4', 'E4', 'C5', 'D3']),
+    ('C4', Othello.Color.BLACK, False, []),
+    ('B5', Othello.Color.WHITE, True, ['C5', 'D5']),
+    ('E1', Othello.Color.BLACK, True, ['E2']),
+    ('Z26', Othello.Color.BLACK, False, []),
+    ('E6', Othello.Color.WHITE, False, [])
+  ]
+)
+def test_check_move(square, color, expected_valid, expected_spaces_to_flip):
+  test_board = Othello(8)
+  test_board.set_squares(['D4', 'D3', 'C5', 'E3', 'E5'], Othello.Color.BLACK)
+  test_board.set_squares(['C6', 'F4', 'E2', 'E5', 'D6'], Othello.Color.WHITE)
+  actual_valid, actual_spaces_to_flip = test_board.check_move(square, color)
+  assert actual_valid == expected_valid
+  assert sorted(actual_spaces_to_flip) == sorted(expected_spaces_to_flip)
