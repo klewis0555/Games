@@ -263,8 +263,15 @@ def test_get_next_space(square, direction, next_space):
     ('C4', Othello.Color.BLACK, False, []),
     ('B5', Othello.Color.WHITE, True, ['C5', 'D5']),
     ('E1', Othello.Color.BLACK, True, ['E2']),
+    ('F6', Othello.Color.BLACK, True, ['E5']),
+    ('G4', Othello.Color.BLACK, True, ['F4']),
+    ('F3', Othello.Color.WHITE, True, ['E4', 'D5']),
+    ('C3', Othello.Color.WHITE, True, ['D4']),
+    ('E6', Othello.Color.BLACK, True, ['E5']),
     ('Z26', Othello.Color.BLACK, False, []),
-    ('E6', Othello.Color.WHITE, False, [])
+    ('E6', Othello.Color.WHITE, False, []),
+    ('E2', Othello.Color.WHITE, False, []),
+    ('E2', Othello.Color.BLACK, False, []),
   ]
 )
 def test_check_move(square, color, expected_valid, expected_spaces_to_flip):

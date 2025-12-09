@@ -242,7 +242,7 @@ class Othello:
       current_space = space
       working_spaces: list[str] = []  # working list of spaces, only add to final list if valid move
       continue_check = True
-      count = 0
+      count = 0 # Failsafe for infinite loops
       while continue_check and count < 100:
         count += 1
         # current_space = getattr(self, f"get_{direction}")(current_space)
