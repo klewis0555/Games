@@ -281,3 +281,22 @@ def test_check_move(square, color, expected_valid, expected_spaces_to_flip):
   actual_valid, actual_spaces_to_flip = test_board.check_move(square, color)
   assert actual_valid == expected_valid
   assert sorted(actual_spaces_to_flip) == sorted(expected_spaces_to_flip)
+
+def test_any_valid_move():
+  test_board = Othello(6)
+  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.BLACK)
+  assert is_valid == True
+  assert sorted(valid_spaces) == sorted(['B3', 'C2', 'D5', 'E4'])
+
+  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.WHITE)
+  assert is_valid == True
+  assert sorted(valid_spaces) == sorted(['B4', 'C5', 'D2', 'E3'])
+
+  test_board.set_squares(['B2', 'C2', 'D2', 'D3', 'C4', 'D4', 'B4', 'B3'], Othello.Color.BLACK)
+  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.BLACK)
+  assert is_valid == False
+  assert valid_spaces == []
+
+  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.WHITE)
+  assert is_valid == True
+  assert sorted(valid_spaces) == sorted(['A1', 'C1', 'E1', 'E3', 'E5', 'C5', 'A5', 'A3'])
