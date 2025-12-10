@@ -1,1 +1,4 @@
 .vscode
+.DS_Store
+
+Othello/game_logs.txt

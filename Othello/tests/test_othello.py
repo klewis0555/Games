@@ -284,19 +284,28 @@ def test_check_move(square, color, expected_valid, expected_spaces_to_flip):
 
 def test_any_valid_move():
   test_board = Othello(6)
-  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.BLACK)
+  assert test_board.any_valid_move(Othello.Color.BLACK) == True
+  assert test_board.any_valid_move(Othello.Color.WHITE) == True
+
+  test_board.set_squares(['B2', 'C2', 'D2', 'D3', 'C4', 'D4', 'B4', 'B3'], Othello.Color.BLACK)
+  assert test_board.any_valid_move(Othello.Color.BLACK) == False
+  assert test_board.any_valid_move(Othello.Color.WHITE) == True
+
+def test_all_valid_moves():
+  test_board = Othello(6)
+  is_valid, valid_spaces = test_board.all_valid_moves(Othello.Color.BLACK)
   assert is_valid == True
   assert sorted(valid_spaces) == sorted(['B3', 'C2', 'D5', 'E4'])
 
-  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.WHITE)
+  is_valid, valid_spaces = test_board.all_valid_moves(Othello.Color.WHITE)
   assert is_valid == True
   assert sorted(valid_spaces) == sorted(['B4', 'C5', 'D2', 'E3'])
 
   test_board.set_squares(['B2', 'C2', 'D2', 'D3', 'C4', 'D4', 'B4', 'B3'], Othello.Color.BLACK)
-  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.BLACK)
+  is_valid, valid_spaces = test_board.all_valid_moves(Othello.Color.BLACK)
   assert is_valid == False
   assert valid_spaces == []
 
-  is_valid, valid_spaces = test_board.any_valid_move(Othello.Color.WHITE)
+  is_valid, valid_spaces = test_board.all_valid_moves(Othello.Color.WHITE)
   assert is_valid == True
   assert sorted(valid_spaces) == sorted(['A1', 'C1', 'E1', 'E3', 'E5', 'C5', 'A5', 'A3'])

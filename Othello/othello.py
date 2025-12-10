@@ -263,7 +263,19 @@ class Othello:
     else:
       return False, spaces_to_flip
 
-  def any_valid_move(self, color: Color) -> tuple[bool, list[str]]:
+  def any_valid_move(self, color: Color) -> bool:
+    """Loops through each available space to see if it is a valid move for the given color. Returns once it finds one.
+
+    :param Color color: Color to check valid moves for
+    :return bool: A boolean of whether there is at least one valid move.
+    """
+    for space in self._board_dict.keys():
+      if self.check_move(space, color)[0]:
+        return True
+
+    return False
+
+  def all_valid_moves(self, color: Color) -> tuple[bool, list[str]]:
     """Loops through all spaces on the board to check if there are any valid moves for the given color.
 
     :param Color color: Color to check valid moves for
